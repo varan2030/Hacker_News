@@ -1,7 +1,15 @@
+
+.jumbotron{
+  background: url("../images/jambo.jpg")no-repeat;
+  opacity: 0.9;
+}
+
 .card{
   padding: 10px;
   margin: 10px;
   height: 20rem;
+  background-color:rgb(173,216,230);
+  opacity: 0.9;
 }
 
 .card-title{

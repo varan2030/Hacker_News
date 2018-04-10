@@ -2,6 +2,15 @@ $(document).ready(function() {
   getData();
 });
 
+$('#modal1').on('hidden.bs.modal', function (e) {
+  $(this)
+    .find("input,textarea,select")
+       .val('')
+       .end()
+    .find("input[type=checkbox], input[type=radio]")
+       .prop("checked", "")
+       .end();
+})
 
 function scrape() {
   $.ajax({
@@ -13,12 +22,17 @@ function scrape() {
 }
 
 function getData() {
+  $("#content").empty();
   $.ajax({
     method: "GET",
     url: "/api/articles/"
   }).then(function(data) {
     console.log(data);
     for (i = 0; i < data.length; i++) {
+      var noteId = "";
+      if (data[i].hasOwnProperty("note")){
+        noteId = data[i].note._id;
+      }
       $("#content").append(`
       <div class="col-4" >
         <div class="card card-deck" style="width: 22rem;" >
@@ -27,7 +41,7 @@ function getData() {
               <p class="card-text">${data[i].description}</p>
               <div class="card-footer">
               <div class="row">
-              <a href="#" onClick="makeNote('${data[i]._id}')" role="button" data-toggle="modal" data-toggle="collapse" data-target="#myModal1">Note</a> 
+              <a href="#" onClick="makeNote('${data[i]._id}', '${noteId}')" role="button" data-toggle="modal" data-toggle="collapse" data-target="#myModal1">Note</a> 
              </div>
         </div>
         </div>
@@ -39,6 +53,7 @@ function getData() {
 }
 
 function deleteData() {
+  $("#content").empty();
   $.ajax({
     method: "DELETE",
     url: "/api/articles/"
@@ -47,32 +62,26 @@ function deleteData() {
   });
 }
 
- function makeNote(id){
-  
-  
-  
-  // var noteTitle = "";
-  // var body= "";
+ function makeNote(id, noteId){
+ 
+  var noteTitle = "";
+  var body = "";
 
   $.get("/api/articles/" +id, function(data) {
   
     console.log(data);
-  
-    if(data.hasOwnProperty("note")){
-      // alert("111");
-     let noteTitle = data.note.noteTitle;
-     let body = data.note.body;
-     modulAppear(noteTitle, body, id);
-    } else {
-     let noteTitle = "";
-     let  body = "";
-      modulAppear(noteTitle, body, id);
-    }
- 
+
+    if ('note' in data){
+     noteTitle = data.note.noteTitle;
+     body = data.note.body;
+     
+    } 
+    modulAppear(noteTitle, body, id);
   });
-  let noteTitle = "";
-  let body= "";
-}
+  
+   
+  }
+  
 
 function modulAppear(title, body, id){
   
@@ -95,7 +104,7 @@ function modulAppear(title, body, id){
           </div>
           <div class="form-row">
             <div class="form-group col-md-6">
-          <button type="" onclick="submitNote('${id}')" class="modal-button btn btn-primary">Submit</button>
+          <button type="" onclick="submitNote('${id}')" class="modal-button btn btn-primary" class="close" data-dismiss="modal">Submit</button>
           </div>
         </div>
         </form>
@@ -119,6 +128,6 @@ function submitNote(id){
 
   $.post("/api/articles/" + id, noteData, function(results) {
     console.log(results);
-    location.reload();
+    
   })
 }

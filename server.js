@@ -12,7 +12,7 @@ var cheerio = require("cheerio");
 // Require all models
 var db = require("./models");
 
-var PORT = 3000;
+var PORT = 8080;
 
 // Initialize Express
 var app = express();
@@ -28,11 +28,14 @@ app.use(express.static("public"));
 
 // By default mongoose uses callbacks for async queries, we're setting it to use promises (.then syntax) instead
 // Connect to the Mongo DB
-mongoose.Promise = Promise;
-mongoose.connect("mongodb://localhost/scrape", {
-    useMongoClient: true
-});
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
+// Set mongoose to leverage built in JavaScript ES6 Promises
+// Connect to the Mongo DB
+mongoose.Promise = Promise;
+mongoose.connect(MONGODB_URI, {
+  useMongoClient: true
+});
 // Routes
 
 // A GET route for scraping the echojs website
@@ -81,6 +84,7 @@ app.get("/api/scrape", function(req, res) {
 app.get("/api/articles", function(req, res) {
   // Grab every document in the Articles collection
   db.Article.find({})
+    .populate("note")
     .then(function(dbArticle) {
       // If we were able to successfully find Articles, send them back to the client
       res.json(dbArticle);
