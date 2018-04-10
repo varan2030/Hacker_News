@@ -28,7 +28,7 @@ app.use(express.static("public"));
 
 // By default mongoose uses callbacks for async queries, we're setting it to use promises (.then syntax) instead
 // Connect to the Mongo DB
-var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
+var MONGODB_URI = process.env.MONGOLAB_CHARCOAL_URI || "mongodb://localhost/scrape";
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 // Connect to the Mongo DB
@@ -41,28 +41,29 @@ mongoose.connect(MONGODB_URI, {
 // A GET route for scraping the echojs website
 app.get("/api/scrape", function(req, res) {
   // First, we grab the body of the html with request
-  axios.get("https://www.techrepublic.com/").then(function(response) {
+  axios.get("https://www.itworld.com/news/").then(function(response) {
     // Then, we load that into cheerio and save it to $ for a shorthand selector
     var $ = cheerio.load(response.data);
 
     // Now, we grab every h2 within an article tag, and do the following:
-    $("ul > li").each(function(i, element) {
+    $("div.river-well").each(function(i, element) {
    
       // Save an empty result object
       var result = {};
 
       // Add the text and href of every link, and save them as properties of the result object
       result.title = $(this)
-      .find("h3 > a")
-        .text();
+      .find("div.post-cont > h3 > a")
+      .text();
       result.link = $(this)
-      .find("h3 > a")
+      .find("div.post-cont > h3 > a")
         .attr("href");
-        result.description = $(this)
-        .find("p.dek")
+      result.description = $(this)
+        .find("div.post-cont > h4")
         .text();
-
-
+      result.imgUrl = $(this)
+      .find("img.lazy")
+      .attr("data-original");
       // Create a new Article using the `result` object built from scraping
       db.Article.create(result)
         .then(function(dbArticle) {
@@ -107,6 +108,21 @@ app.delete("/api/articles", function(req, res) {
         res.json(err);
       });
   });
+
+  app.delete("/api/articles/:id", function(req, res) {
+    // Grab every document in the Articles collection
+    db.Article.remove({_id: req.params.id})
+      .populate("note")
+      .then(function(dbArticle) {
+        // If we were able to successfully find Articles, send them back to the client
+        res.json(dbArticle);
+      })
+      .catch(function(err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+      });
+  });
+
 
 
 

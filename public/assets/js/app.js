@@ -28,26 +28,31 @@ function getData() {
     url: "/api/articles/"
   }).then(function(data) {
     console.log(data);
-    for (i = 0; i < data.length; i++) {
+    for (i = 0; i < 15; i++) {
       var noteId = "";
       if (data[i].hasOwnProperty("note")){
         noteId = data[i].note._id;
       }
       $("#content").append(`
-      <div class="col-4" >
-        <div class="card card-deck" style="width: 22rem;" >
-          <div class="card-body">
-            <h5 class="card-title"><a href="${data[i].link}">${data[i].title}</a></h5>
-              <p class="card-text">${data[i].description}</p>
-              <div class="card-footer">
-              <div class="row">
-              <a href="#" onClick="makeNote('${data[i]._id}', '${noteId}')" role="button" data-toggle="modal" data-toggle="collapse" data-target="#myModal1">Note</a> 
-             </div>
-        </div>
-        </div>
-      </div>
+
+  <div class="col-4" >        
+  <div class="card" style="width: 22rem;">
+  <a href="https://www.itworld.com/${data[i].link}"  target="_blank">
+  <img class="card-img-top" src="${data[i].imgUrl}" alt="Card image cap">
+  </a>
+  <div class="card-body">
+    <h5 class="card-title">${data[i].title}</h5>
+    <p class="card-text">${data[i].description}</p>
+    <div class="card-footer">
+    <div class="row">
+    <a href="#" onClick="makeNote('${data[i]._id}', '${noteId}')" role="button" data-toggle="modal" data-toggle="collapse" data-target="#myModal1">Note</a> 
     </div>
-            `);
+  </div>
+</div>
+</div>
+  </div>
+    
+    `);
     }
   });
 }
@@ -71,7 +76,7 @@ function deleteData() {
   
     console.log(data);
 
-    if ('note' in data){
+    if (data.hasOwnProperty("note")){
      noteTitle = data.note.noteTitle;
      body = data.note.body;
      
@@ -106,6 +111,9 @@ function modulAppear(title, body, id){
             <div class="form-group col-md-6">
           <button type="" onclick="submitNote('${id}')" class="modal-button btn btn-primary" class="close" data-dismiss="modal">Submit</button>
           </div>
+          <div class="form-group col-md-6">
+          <button type="" onclick="deleteNote('${id}')" class="modal-button btn btn-primary" class="close" data-dismiss="modal">Delete</button>
+          </div>
         </div>
         </form>
       <div class="modal-footer">
@@ -124,10 +132,19 @@ function submitNote(id){
   var noteData = {
     noteTitle: noteTitle,
     body: body
-  }
+  };
 
   $.post("/api/articles/" + id, noteData, function(results) {
     console.log(results);
     
-  })
+  });
+};
+
+function deleteNote(id){
+  $.ajax({
+    method: "DELETE",
+    url: "/api/articles/" + id
+  }).then(function(data) {
+    
+  });
 }

@@ -7,9 +7,17 @@
 .card{
   padding: 10px;
   margin: 10px;
-  height: 20rem;
+  height: 35rem;
   background-color:rgb(173,216,230);
   opacity: 0.9;
+}
+
+img{
+  height: 15rem;
+}
+
+.modal-button{
+  width: 100%;
 }
 
 .card-title{
