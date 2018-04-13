@@ -15,8 +15,8 @@ body-parser : https://www.npmjs.com/package/body-parser
 morgan : https://www.npmjs.com/package/morgan
 
 ## Screenshots
-![alt tag](https://github.com/varan2030/Hacker_News/tree/master/public/assets/images/main_page.png)
-![alt tag](https://github.com/varan2030/Hacker_News/tree/master/public/assets/images/note_submit.png)
+![alt tag](https://github.com/varan2030/Hacker_News/blob/master/public/assets/images/main_page.png)
+![alt tag](https://github.com/varan2030/Hacker_News/blob/master/public/assets/images/note_submit.png)
 
 You can find all my projects in My Portfolio: https://varan2030.github.io/Bootstrap-Portfolio/
 
