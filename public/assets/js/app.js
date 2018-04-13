@@ -2,6 +2,12 @@ $(document).ready(function() {
   getData();
 });
 
+function modalVision(){
+
+  $(".modal").on("hidden.bs.modal", function(){
+    $("#modal1").html("");
+});
+}
 
 function scrape() {
   $.ajax({
@@ -9,8 +15,13 @@ function scrape() {
     url: "/api/scrape/"
   }).then(function(data) {
     console.log(data);
+    $("#scrapeComplete").text("Scape Complete");
   });
 }
+
+setTimeout(function(){
+  $('#scrapeComplete').remove();
+}, 5000);
 
 function getData() {
   $("#content").empty();
@@ -49,27 +60,19 @@ function getData() {
 }
 
 function deleteData() {
-  $("#content").empty();
+ 
   $.ajax({
     method: "DELETE",
     url: "/api/articles/"
   }).then(function(data) {
     console.log(data);
+    getData();
   });
 }
 
  function makeNote(id, noteId){
  
-  $('#modal1').on('hidden.bs.modal', function (e) {
-    $(this)
-      .find("input,textarea,select")
-         .val('')
-         .end()
-      .find("input[type=checkbox], input[type=radio]")
-         .prop("checked", "")
-         .end();
-  })
-
+  modalVision();
   var noteTitle = "";
   var body = "";
 
@@ -82,12 +85,12 @@ function deleteData() {
      body = data.note.body;
      
     } 
+  
     modulAppear(noteTitle, body, id);
   });
   
    
   }
-  
 
 function modulAppear(title, body, id){
   
@@ -144,8 +147,8 @@ function submitNote(id){
 function deleteNote(id){
   $.ajax({
     method: "DELETE",
-    url: "/api/articles/" + id
+    url: "/api/notes/" + id
   }).then(function(data) {
-    
+    getData();
   });
 }

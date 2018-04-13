@@ -109,7 +109,7 @@ app.delete("/api/articles", function(req, res) {
       });
   });
 
-  app.delete("/api/articles/:id", function(req, res) {
+  app.delete("/api/notes/:id", function(req, res) {
     // Grab every document in the Articles collection
     db.Article.remove({_id: req.params.id})
       .populate("note")

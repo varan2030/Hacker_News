@@ -44,3 +44,10 @@ body{
   background:rgb(106, 177, 201);
   color: black;
 }
+
+#scrapeComplete{
+  position: relative;
+  left: 300px;
+  font-size: 20px;
+  color: blue;
+}
